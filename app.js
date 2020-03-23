@@ -21,8 +21,11 @@ const ItemCtrl=(function(){
         currentItem:null,
         totalcalories:0
     }
-
+    // public methods
     return{
+        getItems:function(){
+            return data.items;
+        },
         logData:function(){
             return data;
         }
@@ -35,6 +38,41 @@ const ItemCtrl=(function(){
 
 // ui controller
 const UICtrl=(function(){
+    const UISelector={
+
+        itemList:'#item-list'
+    }
+
+    
+    
+    
+    
+    
+        // public methods
+
+    return{
+       
+
+       
+        populateItemList:function(items){
+            let html='';
+
+            items.forEach(function(item) {
+                html+=` <li class="collection-item" id="item-${item.id}">
+                <strong>${item.name}:</strong><em>${item.calories} calories</em>
+                <a href="#" class="secondary-content">
+                    <i class="edit-item fa fa-pencil"></i>
+
+                </a>
+            </li>
+                `
+            });
+            // insert list items
+            document.querySelector(UISelector.itemList).innerHTML=html;
+        }
+
+    }
+
 
 })()
 
@@ -42,10 +80,16 @@ const UICtrl=(function(){
 
 // app controller
 const App=(function(ItemCtrl,UICtrl){
-   
+     
+    // public methods
     return{
         init:function(){
-            console.log('Initializing app....')
+            // fetch items from datastructure
+            const items=ItemCtrl.getItems();
+            
+            // populate list with items
+            UICtrl.populateItemList(items)
+
         }
     }
    
