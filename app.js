@@ -26,6 +26,25 @@ const ItemCtrl=(function(){
         getItems:function(){
             return data.items;
         },
+        addItem:function(name,calories){
+            let ID;
+            // create id
+            if(data.items.lenght>0){
+              ID=data.items[data.items.length-1].id+1;
+            }else{
+                ID=0;
+            }
+            //  calories to number
+             calories=parseInt(calories);
+
+            //  create new item
+            newItem= new Item(ID,name,calories);
+           
+            // add to items array
+            data.items.push(newItem);
+
+            return newItem;
+        },
         logData:function(){
             return data;
         }
@@ -38,22 +57,14 @@ const ItemCtrl=(function(){
 
 // ui controller
 const UICtrl=(function(){
-    const UISelector={
-
-        itemList:'#item-list'
+    const UISelectors={
+     itemList:'#item-list',
+     addBtn:'.add-btn',
+     itemNameInput:'#item-name',
+     itemCaloriesInput:'#item-calories'
     }
-
-    
-    
-    
-    
-    
         // public methods
-
     return{
-       
-
-       
         populateItemList:function(items){
             let html='';
 
@@ -64,12 +75,22 @@ const UICtrl=(function(){
                     <i class="edit-item fa fa-pencil"></i>
 
                 </a>
-            </li>
-                `
+            </li>`;
             });
             // insert list items
-            document.querySelector(UISelector.itemList).innerHTML=html;
+            document.querySelector(UISelectors.itemList).innerHTML=html;
+        },
+        getItemInput:function(){
+            return{
+                name:document.querySelector(UISelectors.itemNameInput).value,
+                calories:document.querySelector(UISelectors.itemCaloriesInput).value
+            
         }
+    },
+        getSelectors:function(){
+            return UISelectors;
+        }
+
 
     }
 
@@ -80,6 +101,27 @@ const UICtrl=(function(){
 
 // app controller
 const App=(function(ItemCtrl,UICtrl){
+    // load event listner
+    const loadEventListner=function(){
+        const UISelectors=UICtrl.getSelectors();
+
+        // add item event
+        document.querySelector(UISelectors.addBtn).addEventListener('click',itemAddSubmit);
+   }
+
+//    add item submit
+const itemAddSubmit=function(e){
+    // get form input from ui controller
+    const input=UICtrl.getItemInput();
+    
+    // check for name and calorie input
+    if(input.name !=='' && input.calories !==''){
+        // add item
+       const newItem= ItemCtrl.addItem(input.name,input.calories)
+    }
+
+    e.preventDefault();
+}
      
     // public methods
     return{
@@ -90,6 +132,9 @@ const App=(function(ItemCtrl,UICtrl){
             // populate list with items
             UICtrl.populateItemList(items)
 
+            // load event listner
+            loadEventListner();
+
         }
     }
    
@@ -97,5 +142,6 @@ const App=(function(ItemCtrl,UICtrl){
 
 // initialize app
 App.init();
+
 
 
