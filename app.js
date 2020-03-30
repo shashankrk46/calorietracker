@@ -7,7 +7,6 @@ const ItemCtrl=(function(){
         this.id=id;
         this.name=name;
         this.calories=calories;
-
     }
     // Data structure/state
     const data={
@@ -18,7 +17,7 @@ const ItemCtrl=(function(){
             // {id:2,name:'Eggs',calories:300}
         ],
         currentItem:null,
-        totalcalories:0
+        totalCalories:0
     }
     // public methods
     return{
@@ -44,24 +43,32 @@ const ItemCtrl=(function(){
 
             return newItem;
         },
+        getTotalCalories:function(){
+        let total=0;
+        // loop through itmes and add cals
+        data.items.forEach(function(item){
+            total+=item.calories;
+        });
+
+        // set total cal in data structure
+        data.totalCalories=total;
+        //   return total
+        return data.totalCalories;
+        },
         logData:function(){
-              console.log(data)
+        
             return data;
         }
     }
-
-   
 })()
-
-
-
 // ui controller
 const UICtrl=(function(){
     const UISelectors={
      itemList:'#item-list',
      addBtn:'.add-btn',
      itemNameInput:'#item-name',
-     itemCaloriesInput:'#item-calories'
+     itemCaloriesInput:'#item-calories',
+     totalCalories:'.total-calories'
     }
         // public methods
     return{
@@ -105,10 +112,6 @@ const UICtrl=(function(){
 
         // insert itme
         document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend',li)
-
-
-        
-
     },
     clearInput:function(){
         document.querySelector(UISelectors.itemNameInput).value='';
@@ -118,17 +121,14 @@ const UICtrl=(function(){
         document.querySelector(UISelectors.itemList).style.display='none';
 
     },
+    showTotalcalories:function(totalcalories){
+        document.querySelector(UISelectors.totalCalories).textContent=totalcalories;
+    },
         getSelectors:function(){
             return UISelectors;
         }
-
-
-    }
-
-
+       }
 })()
-
-
 
 // app controller
 const App=(function(ItemCtrl,UICtrl){
@@ -152,14 +152,19 @@ const itemAddSubmit=function(e){
     //    add item to ui list
      UICtrl.addListItem(newItem);
 
+    //  get total calories
+    const totalCalories=ItemCtrl.getTotalCalories();
+
+    // add total calories to ui
+    UICtrl.showTotalcalories(totalCalories);
+
     //  clear fields
     UICtrl.clearInput();
     }
 
     e.preventDefault();
 }
-     
-    // public methods
+     // public methods
     return{
         init:function(){
             // fetch items from datastructure
@@ -173,10 +178,12 @@ const itemAddSubmit=function(e){
                 // populate list with items
             UICtrl.populateItemList(items)
             }
-            
-           
+             //  get total calories
+             const totalCalories=ItemCtrl.getTotalCalories();
 
-            // load event listner
+             // add total calories to ui
+             UICtrl.showTotalcalories(totalCalories);
+             // load event listner
             loadEventListner();
 
         }
