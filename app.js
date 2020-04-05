@@ -35,6 +35,32 @@ const StorageCtrl=(function(){
             items=JSON.parse(localStorage.getItem('items'));
         }
         return items;
+    },
+    updateItemStorage:function(updatedItem){
+        let items=JSON.parse(localStorage.getItem('items'));
+
+        items.forEach(function(item,index){
+            if(updatedItem.id===item.id){
+                items.splice(index,1,updatedItem);
+
+            }
+        });
+        localStorage.setItem('items',JSON.stringify(items));
+    },
+    deleteItemFromStorage:function(id){
+        let items=JSON.parse(localStorage.getItem('items'));
+
+        items.forEach(function(item,index){
+            if(id===item.id){
+                items.splice(index,1);
+
+            }
+        });
+        localStorage.setItem('items',JSON.stringify(items));
+ 
+    },
+    clearItemsFromstorage:function(){
+        localStorage.removeItem('items');
     }
 }
 
@@ -57,6 +83,7 @@ const ItemCtrl=(function(){
         //     // {id:2,name:'Eggs',calories:300}
         // ],
         items:StorageCtrl.getItemsFromStorage(),
+        
         currentItem:null,
         totalCalories:0
     }
@@ -396,6 +423,9 @@ const itemAddSubmit=function(e){
          // add total calories to ui
         UICtrl.showTotalcalories(totalCalories);
 
+        // update local storage
+        StorageCtrl.updateItemStorage(updatedItem);
+
         UICtrl.clearEditState();
 
         
@@ -420,6 +450,8 @@ const itemAddSubmit=function(e){
          // add total calories to ui
         UICtrl.showTotalcalories(totalCalories);
 
+        StorageCtrl.deleteItemFromStorage(currentItem.id);
+
         UICtrl.clearEditState();
 
         e.preventDefault();
@@ -439,6 +471,9 @@ const itemAddSubmit=function(e){
 
     // remove from Ui
     UICtrl.removeItems();
+
+    // claer from local storage
+    StorageCtrl.clearItemsFromstorage();
 
     // hide Ul
     UICtrl.hideList();
